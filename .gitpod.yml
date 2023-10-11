@@ -1,0 +1,3 @@
+tasks:
+  - name: Init 
+    init: sdk install asciidoctorj
