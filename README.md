@@ -2,7 +2,7 @@
 
 sdk install asciidoctorj
 asciidoctorj sandbox.adoc
-
+python -m http.server
 
 ## Rollup of png lib
 
