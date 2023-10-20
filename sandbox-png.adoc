@@ -1,0 +1,67 @@
+[.drawio]
+image::demo.dio.png[]
+
+++++
+<style>
+div.mxgraph {
+  max-width:100%;
+  width: 100% !important;
+  height: 80vh !important;
+  border:1px solid transparent;
+}
+</style>
+<script type="text/javascript" src="https://viewer.diagrams.net/js/viewer-static.min.js"></script>
+
+<script src="lib/index.js"></script>
+<script>
+function createViewer(content, i){
+    let viewer = document.createElement('div');
+    viewer.setAttribute('id','viewer'+i);
+    viewer.setAttribute('class', 'mxgraph');
+    let mxgraph = {
+        "highlight":"#0000ff",
+        "nav":true,
+        "resize":true,
+        "toolbar":"zoom layers tags lightbox",
+        "edit":"_blank",
+        "xml":content,
+    }
+    viewer.setAttribute('data-mxgraph', JSON.stringify(mxgraph));
+    return viewer;
+}
+
+const getBlobFromUrl = (myImageUrl) => {
+  return new Promise((resolve, reject) => {
+    let request = new XMLHttpRequest()
+    request.open('GET', myImageUrl, true)
+    request.responseType = 'blob'
+    request.onload = () => {
+      resolve(request.response)
+    }
+    request.onerror = reject
+    request.send()
+  })
+}
+
+function addViewerToAllDrawioImages() {
+  let i = 0;
+
+  [...document.querySelectorAll('.drawio img')].forEach(function (imgElement) {
+    const relativePath = imgElement.getAttribute('src')
+    const href = window.location.href
+    const absolutePath = href.substring(0, href.lastIndexOf('/')) + '/' + relativePath
+    getBlobFromUrl(absolutePath)
+     .then((blob) => blob.arrayBuffer())
+     .then(arrayBuffer => decode(arrayBuffer))
+     .then(metadata => metadata.text)
+     .then(text => createViewer(decodeURIComponent(text.mxfile), i++))
+     .then(viewer => imgElement.parentNode.replaceChild(viewer,imgElement))
+     .then(() => GraphViewer.processElements())
+  })
+}
+document.addEventListener('DOMContentLoaded', addViewerToAllDrawioImages)
+
+
+</script>
+++++
+
